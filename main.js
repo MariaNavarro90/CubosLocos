@@ -1,4 +1,5 @@
-function colorRandom(){
+function colorRandom()
+{
     let color = "";
     let numero = Math.floor(Math.random()*3);
     switch(numero){
@@ -32,6 +33,12 @@ class Vector2D
         this.y = y;
     }
 
+    Sumar(vector2d)
+    {
+        this.x += vector2d.x;
+        this.y += vector2d.y;
+    }
+
     Multiplicar(f)
     {
         this.x *= f;
@@ -39,19 +46,26 @@ class Vector2D
     }
 }
 
-class Cubo{
-    constructor(vector2d,color){
+class Cubo
+{
+    constructor(vector2d,color)
+    {
         this.vector2d = vector2d;
         this.color = color;
     }
 }
-class Tablero{
-    constructor(ancho,alto){
+class Tablero
+{
+    constructor(ancho,alto)
+    {
         this.ancho = ancho;
         this.alto = alto;
     }
+
     celdas = [];
-    completarCeldas(){
+
+    completarCeldas()
+    {
         for(let i = 0; i < this.ancho;i++){
             this.celdas[i] = [];
             for(let j = 0; j < this.alto;j++){
@@ -59,7 +73,9 @@ class Tablero{
             }
         }
     }
-    imprimirCeldas(){
+
+    imprimirCeldas()
+    {
         let juegoDOM = document.getElementById("juego");
         for(let y = 0; y < this.celdas.length; y++)
         {
@@ -74,27 +90,31 @@ class Tablero{
             }
         }
     }
-
 }
-class Jugador{
+class Jugador
+{
     constructor(nombre){
         this.nombre = nombre;
         this.puntaje = 0;
     }  
 }
-class Juego{
+class Juego
+{
     constructor(){
         this.jugador = new Jugador(prompt("Ingrese su nombre de usuario"));
         this.tablero = new Tablero(10,10);
         this.comenzarJuego();
     }
+
     comenzarJuego(){
         this.tablero.completarCeldas();
     }
+
     mostrarJuego(){
         console.log(this.jugador.nombre);
         this.tablero.imprimirCeldas();
     }
 }
+
 var juego = new Juego();
 juego.mostrarJuego();
