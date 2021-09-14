@@ -25,6 +25,15 @@ function instanciarElemento(elemento, parent, posicion)
     parent.appendChild(elemento);
 }
 
+function eliminarCubos(evento)
+{
+    let cuboDOM = evento.target;
+    let posicionX =cuboDOM.getAttribute("posicion-x");
+    let posicionY =cuboDOM.getAttribute("posicion-y");
+    juego.tablero.celdas[posicionY][posicionX] = undefined;
+    cuboDOM.remove();
+}
+
 class Vector2D
 {
     constructor(x,y)
@@ -86,6 +95,9 @@ class Tablero
                 cuboDOM.classList.add(this.celdas[y][x].color);
                 let posicion = new Vector2D(x,y);
                 posicion.Multiplicar(50);
+                cuboDOM.setAttribute("posicion-x",x);
+                cuboDOM.setAttribute("posicion-y",y);
+                cuboDOM.onclick = eliminarCubos;
                 instanciarElemento(cuboDOM, juegoDOM, posicion);
             }
         }
