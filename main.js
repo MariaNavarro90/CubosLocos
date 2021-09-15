@@ -25,18 +25,93 @@ function instanciarElemento(elemento, parent, posicion)
     parent.appendChild(elemento);
 }
 
-function eliminarCubos(evento)
+function eliminarCubo(evento)
 {
     let cuboDOM = evento.target;
-    let posicionX =cuboDOM.getAttribute("posicion-x");
-    let posicionY =cuboDOM.getAttribute("posicion-y");
-    juego.tablero.celdas[posicionY][posicionX] = undefined;
-    cuboDOM.remove();
+    let posicionX = Number(cuboDOM.getAttribute("posicion-x"));
+    let posicionY = Number(cuboDOM.getAttribute("posicion-y"));
+    console.log("posicion-x: " + posicionX + " / posicion-y: " + posicionY);
+    console.log(juego.tablero.celdas[posicionY][posicionX].posicion);
+    let cubo = juego.tablero.celdas[posicionY][posicionX];
+    cubo.eliminar = true;
+    marcarCubosAdjacentes(cubo);
+    eliminarCubos();
+}
+
+function marcarCubosAdjacentes(cubo)
+{
+    let x = cubo.posicion.x;
+    let y = cubo.posicion.y;
+    let celdas = juego.tablero.celdas;
+    
+    let cubosVecinos = [];
+
+    // Cubo superior
+    if (y > 0 && typeof celdas[y - 1][x] != 'undefined')
+    {
+        if (cubo.color == celdas[y - 1][x].color && celdas[y - 1][x].eliminar == false)
+        {
+            cubosVecinos.push(celdas[y - 1][x]);
+            celdas[y - 1][x].eliminar = true;
+        }
+    }
+
+    // Cubo inferior
+    if (y < celdas.length - 1 && typeof celdas[y + 1][x] != 'undefined')
+    {
+        if (cubo.color == celdas[y + 1][x].color && celdas[y + 1][x].eliminar == false)
+        {
+            cubosVecinos.push(celdas[y + 1][x]);
+            celdas[y + 1][x].eliminar = true;
+        }
+    }
+
+    // Cubo izquierdo
+    if (x > 0 && typeof celdas[y][x - 1] != 'undefined')
+    {
+        if (cubo.color == celdas[y][x - 1].color && celdas[y][x - 1].eliminar == false)
+        {
+            cubosVecinos.push(celdas[y][x - 1]);
+            celdas[y][x - 1].eliminar = true;
+        }
+    }
+
+    // Cubo derecho
+    if (x < celdas[y].length - 1 && typeof celdas[y][x + 1] != 'undefined')
+    {
+        if (cubo.color == celdas[y][x + 1].color && celdas[y][x + 1].eliminar == false)
+        {
+            cubosVecinos.push(celdas[y][x + 1]);
+            celdas[y][x + 1].eliminar = true;
+        }
+    }
+
+    for (let i = 0; i < cubosVecinos.length; i++)
+    {
+        marcarCubosAdjacentes(cubosVecinos[i]);
+    }
+}
+
+function eliminarCubos()
+{
+    let celdas = juego.tablero.celdas;
+    for (let y = 0; y < celdas.length; y++)
+    {
+        for(let x = 0; x < celdas[y].length; x++)
+        {
+            if (celdas[y][x] != 0 && celdas[y][x].eliminar == true)
+            {
+                celdas[y][x] = [];
+                let cuboDOM = document.querySelector('[posicion-x="' + x + '"][posicion-y="' + y + '"]');
+                cuboDOM.remove();
+            }
+        }
+    }
 }
 
 class Vector2D
 {
-    constructor(x,y)
+    constructor(y,x)
     {
         this.x = x;
         this.y = y;
@@ -57,10 +132,11 @@ class Vector2D
 
 class Cubo
 {
-    constructor(vector2d,color)
+    constructor(posicion,color)
     {
-        this.vector2d = vector2d;
+        this.posicion = posicion;
         this.color = color;
+        this.eliminar = false;
     }
 }
 class Tablero
@@ -93,12 +169,13 @@ class Tablero
                 let cuboDOM = document.createElement("div");
                 cuboDOM.classList.add("cubo");
                 cuboDOM.classList.add(this.celdas[y][x].color);
-                let posicion = new Vector2D(x,y);
+                let posicion = new Vector2D(y,x);
+                console.log("Titolog100:: x="+x+" / y="+y+" / posX="+posicion.x+" / posY="+posicion.y);
                 posicion.Multiplicar(50);
                 cuboDOM.setAttribute("posicion-x",x);
                 cuboDOM.setAttribute("posicion-y",y);
-                cuboDOM.onclick = eliminarCubos;
-                instanciarElemento(cuboDOM, juegoDOM, posicion);
+                cuboDOM.onclick = eliminarCubo;
+                instanciarElemento(cuboDOM, juegoDOM, posicion);  
             }
         }
     }
