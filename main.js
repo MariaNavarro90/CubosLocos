@@ -170,7 +170,7 @@ class Tablero
                 cuboDOM.classList.add("cubo");
                 cuboDOM.classList.add(this.celdas[y][x].color);
                 let posicion = new Vector2D(y,x);
-                posicion.Multiplicar(50);
+                posicion.Multiplicar(40);
                 cuboDOM.setAttribute("posicion-x",x);
                 cuboDOM.setAttribute("posicion-y",y);
                 cuboDOM.onclick = eliminarCubo;
