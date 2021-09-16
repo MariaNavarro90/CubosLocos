@@ -11,7 +11,28 @@
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <div id="juego"></div>
+        <div class="container">
+            <div id="header">
+                <h1>Cubos locos</h1>
+            </div>
+            <div id="juego"></div>
+            <div id="puntajes">
+                <h2>Mejores puntuaciones</h2>
+                <ul id="mejoresPuntajes">
+                    
+                </ul>
+            </div>
+        </div>
+        <div id="splash">
+            <div class="input">
+                <h2>Ingrese su nombre</h2>
+                <input type="text" class="texto" name="nombre" id="nombreJugador">
+                <div class="contenedor-input">
+                    <input type="button" name="comenzar" id="comenzar">
+                </div>
+            </div>
+        </div>
+        
         <script src="main.js"></script>
         
     </body>

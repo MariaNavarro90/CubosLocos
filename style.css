@@ -1,4 +1,8 @@
-
+html, body
+{
+    margin: 0;
+    padding: 0;
+}
 body
 {
     background-color: black;
@@ -32,4 +36,79 @@ h1
 .azul
 {
     background-color:rgb(43, 46, 226);
+}
+
+.container
+{
+    display: grid;
+    grid-template-columns:  repeat(3, 1fr);  
+    grid-template-areas: 'header juego puntajes';
+}
+
+#header, #juego, #puntaje
+{
+    height: 100vh;
+}
+
+#header
+{
+    grid-area: header;
+}
+
+#juego
+{
+    grid-area: juego;
+    position: relative;
+    background-color:rgb(14, 15, 53);
+}
+
+#puntaje
+{
+    grid-area: puntaje;
+}
+
+#splash
+{
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width:100%;
+    z-index: 2;
+    background-color:rgb(14, 15, 53);
+}
+
+.input
+{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    text-align: center;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.texto
+{
+    background-color: rgb(56, 56, 255);
+    color: yellow;
+    font-size: 1.5em;
+    padding: 0.125em;
+    border: none;
+    font-family: "Roboto Mono", sans-serif;
+    text-align: center;
+}
+
+.contenedor-input
+{
+    padding: 2em;
+}
+
+#comenzar 
+{
+    width: 4em;
+    height: 4em;
+    background-image: url("start.svg");
+    background-color:rgb(125, 178, 199);
+    border: none;
 }

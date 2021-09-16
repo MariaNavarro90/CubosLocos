@@ -170,7 +170,6 @@ class Tablero
                 cuboDOM.classList.add("cubo");
                 cuboDOM.classList.add(this.celdas[y][x].color);
                 let posicion = new Vector2D(y,x);
-                console.log("Titolog100:: x="+x+" / y="+y+" / posX="+posicion.x+" / posY="+posicion.y);
                 posicion.Multiplicar(50);
                 cuboDOM.setAttribute("posicion-x",x);
                 cuboDOM.setAttribute("posicion-y",y);
@@ -190,8 +189,9 @@ class Jugador
 class Juego
 {
     constructor(){
-        this.jugador = new Jugador(prompt("Ingrese su nombre de usuario"));
         this.tablero = new Tablero(10,10);
+        console.log("clase juego: " + document.getElementById("nombreJugador"));
+        this.jugador = document.getElementById("nombreJugador").value;
         this.comenzarJuego();
     }
 
@@ -205,5 +205,24 @@ class Juego
     }
 }
 
-var juego = new Juego();
-juego.mostrarJuego();
+var juego;
+
+function Iniciar()
+{
+    juego = new Juego();
+    juego.mostrarJuego();
+    let puntajesDOM = document.getElementById("mejoresPuntajes");
+    let jugador = document.createElement("li");
+    console.log("jugador: " + juego.jugador);
+    jugador.innerText = juego.jugador;
+    puntajesDOM.appendChild(jugador);
+    document.getElementById("splash").remove();
+}
+
+var botonInicio = document.getElementById("comenzar");
+botonInicio.onclick = () => {
+    if(document.getElementById("nombreJugador").value != "")
+    {
+        Iniciar();
+    }
+}
