@@ -36,6 +36,8 @@ function eliminarCubo(evento)
     cubo.eliminar = true;
     marcarCubosAdjacentes(cubo);
     eliminarCubos();
+    reordenarCubos();
+    juego.tablero.imprimirCeldas();
 }
 
 function marcarCubosAdjacentes(cubo)
@@ -99,11 +101,35 @@ function eliminarCubos()
     {
         for(let x = 0; x < celdas[y].length; x++)
         {
-            if (celdas[y][x] != 0 && celdas[y][x].eliminar == true)
+            if (celdas[y][x].length != 0 && celdas[y][x].eliminar == true)
             {
                 celdas[y][x] = [];
                 let cuboDOM = document.querySelector('[posicion-x="' + x + '"][posicion-y="' + y + '"]');
                 cuboDOM.remove();
+            }
+        }
+    }
+}
+
+function reordenarCubos()
+{
+    let celdas = juego.tablero.celdas;
+    for (let a = 0; a < celdas.length; a++)
+    {
+        for (let y = celdas.length - 1; y >= 0; y--)
+        {
+            for (let x = 0; x < celdas[y].length; x++)
+            {
+                if (celdas[y][x].length == 0 || typeof celdas[y][x] == 'undefined')
+                {
+                    if (y > 0 && typeof celdas[y - 1][x] != 'undefined' && celdas[y - 1][x].length != 0)
+                    {
+                        celdas[y][x] = celdas[y - 1][x];
+                        celdas[y][x].posicion.x = x;
+                        celdas[y][x].posicion.y = y;
+                        celdas[y - 1][x] = [];
+                    }
+                }
             }
         }
     }
@@ -162,19 +188,23 @@ class Tablero
     imprimirCeldas()
     {
         let juegoDOM = document.getElementById("juego");
+        juegoDOM.innerHTML = "";
         for(let y = 0; y < this.celdas.length; y++)
         {
             for (let x = 0; x < this.celdas[y].length; x++)
             {
-                let cuboDOM = document.createElement("div");
-                cuboDOM.classList.add("cubo");
-                cuboDOM.classList.add(this.celdas[y][x].color);
-                let posicion = new Vector2D(y,x);
-                posicion.Multiplicar(40);
-                cuboDOM.setAttribute("posicion-x",x);
-                cuboDOM.setAttribute("posicion-y",y);
-                cuboDOM.onclick = eliminarCubo;
-                instanciarElemento(cuboDOM, juegoDOM, posicion);  
+                if (this.celdas[y][x].length != 0)
+                {
+                    let cuboDOM = document.createElement("div");
+                    cuboDOM.classList.add("cubo");
+                    cuboDOM.classList.add(this.celdas[y][x].color);
+                    let posicion = new Vector2D(y,x);
+                    posicion.Multiplicar(40);
+                    cuboDOM.setAttribute("posicion-x",x);
+                    cuboDOM.setAttribute("posicion-y",y);
+                    cuboDOM.onclick = eliminarCubo;
+                    instanciarElemento(cuboDOM, juegoDOM, posicion);  
+                }
             }
         }
     }
