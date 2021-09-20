@@ -21,6 +21,12 @@ h1
     height: 38px;
     background-color: grey;
     border-radius: 4px;
+    transition: 0.25s all ease;
+}
+
+.cubo:hover
+{
+    box-shadow: 0px 0px 10px white;
 }
 
 .rojo
