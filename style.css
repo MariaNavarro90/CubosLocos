@@ -44,6 +44,10 @@ h1
     background-color:rgb(43, 46, 226);
 }
 
+.violet {
+    background-color:rgb(189, 114, 250) !important;
+}
+
 .container
 {
     display: grid;

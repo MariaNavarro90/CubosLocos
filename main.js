@@ -21,8 +21,13 @@ function colorRandom()
 
 function instanciarElemento(elemento, parent, posicion)
 {
-    elemento.setAttribute("style", "left:" + posicion.x  + "px;top:" + posicion.y + "px");
+    ubicarElemento(elemento, posicion);
     parent.appendChild(elemento);
+}
+
+function ubicarElemento(elemento, posicion)
+{
+    elemento.setAttribute("style", "left:" + posicion.x  + "px;top:" + posicion.y + "px");
 }
 
 function eliminarCubo(evento)
@@ -30,14 +35,12 @@ function eliminarCubo(evento)
     let cuboDOM = evento.target;
     let posicionX = Number(cuboDOM.getAttribute("posicion-x"));
     let posicionY = Number(cuboDOM.getAttribute("posicion-y"));
-    console.log("posicion-x: " + posicionX + " / posicion-y: " + posicionY);
-    console.log(juego.tablero.celdas[posicionY][posicionX].posicion);
     let cubo = juego.tablero.celdas[posicionY][posicionX];
     cubo.eliminar = true;
     marcarCubosAdjacentes(cubo);
     eliminarCubos();
     reordenarCubos();
-    juego.tablero.imprimirCeldas();
+    bajarCubos();
 }
 
 function marcarCubosAdjacentes(cubo)
@@ -135,6 +138,31 @@ function reordenarCubos()
     }
 }
 
+function bajarCubos()
+{
+    let celdas = juego.tablero.celdas;
+    for (let y = 0; y < celdas.length; y++)
+    {
+        for (let x = 0; x < celdas[y].length; x++)
+        {
+            if (celdas[y][x].length != 0)
+            {
+                let cubo = celdas[y][x];
+                let cuboDOM = document.getElementById(cubo.id.toString());
+                let yPos = Number(cuboDOM.getAttribute("posicion-y"));
+                if (yPos != cubo.posicion.y)
+                {
+                    let nuevaPosicion = new Vector2D(y,x);
+                    nuevaPosicion.Multiplicar(40);
+                    cuboDOM.setAttribute("posicion-x", cubo.posicion.x);
+                    cuboDOM.setAttribute("posicion-y", cubo.posicion.y);
+                    ubicarElemento(cuboDOM, nuevaPosicion);
+                }
+            }
+        }
+    }
+}
+
 class Vector2D
 {
     constructor(y,x)
@@ -158,11 +186,12 @@ class Vector2D
 
 class Cubo
 {
-    constructor(posicion,color)
+    constructor(posicion,color, id)
     {
         this.posicion = posicion;
         this.color = color;
         this.eliminar = false;
+        this.id = id;
     }
 }
 class Tablero
@@ -177,10 +206,13 @@ class Tablero
 
     completarCeldas()
     {
+        var index = 0;
         for(let i = 0; i < this.ancho;i++){
             this.celdas[i] = [];
             for(let j = 0; j < this.alto;j++){
-                this.celdas[i][j] = new Cubo(new Vector2D(i,j) ,colorRandom());
+                let idCubo = "cubo-" + index.toString();
+                this.celdas[i][j] = new Cubo(new Vector2D(i,j) ,colorRandom(), idCubo);
+                index++;
             }
         }
     }
@@ -202,6 +234,7 @@ class Tablero
                     posicion.Multiplicar(40);
                     cuboDOM.setAttribute("posicion-x",x);
                     cuboDOM.setAttribute("posicion-y",y);
+                    cuboDOM.setAttribute("id", this.celdas[y][x].id);
                     cuboDOM.onclick = eliminarCubo;
                     instanciarElemento(cuboDOM, juegoDOM, posicion);  
                 }
@@ -220,7 +253,6 @@ class Juego
 {
     constructor(){
         this.tablero = new Tablero(10,10);
-        console.log("clase juego: " + document.getElementById("nombreJugador"));
         this.jugador = document.getElementById("nombreJugador").value;
         this.comenzarJuego();
     }
@@ -230,7 +262,6 @@ class Juego
     }
 
     mostrarJuego(){
-        console.log(this.jugador.nombre);
         this.tablero.imprimirCeldas();
     }
 }
@@ -243,7 +274,6 @@ function Iniciar()
     juego.mostrarJuego();
     let puntajesDOM = document.getElementById("mejoresPuntajes");
     let jugador = document.createElement("li");
-    console.log("jugador: " + juego.jugador);
     jugador.innerText = juego.jugador;
     puntajesDOM.appendChild(jugador);
     document.getElementById("splash").remove();
