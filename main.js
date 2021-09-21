@@ -37,130 +37,8 @@ function eliminarCubo(evento)
     let posicionY = Number(cuboDOM.getAttribute("posicion-y"));
     let cubo = juego.tablero.celdas[posicionY][posicionX];
     cubo.eliminar = true;
-    marcarCubosAdjacentes(cubo);
-    eliminarCubos();
-    reordenarCubos();
-    bajarCubos();
-}
-
-function marcarCubosAdjacentes(cubo)
-{
-    let x = cubo.posicion.x;
-    let y = cubo.posicion.y;
-    let celdas = juego.tablero.celdas;
-    
-    let cubosVecinos = [];
-
-    // Cubo superior
-    if (y > 0 && typeof celdas[y - 1][x] != 'undefined')
-    {
-        if (cubo.color == celdas[y - 1][x].color && celdas[y - 1][x].eliminar == false)
-        {
-            cubosVecinos.push(celdas[y - 1][x]);
-            celdas[y - 1][x].eliminar = true;
-        }
-    }
-
-    // Cubo inferior
-    if (y < celdas.length - 1 && typeof celdas[y + 1][x] != 'undefined')
-    {
-        if (cubo.color == celdas[y + 1][x].color && celdas[y + 1][x].eliminar == false)
-        {
-            cubosVecinos.push(celdas[y + 1][x]);
-            celdas[y + 1][x].eliminar = true;
-        }
-    }
-
-    // Cubo izquierdo
-    if (x > 0 && typeof celdas[y][x - 1] != 'undefined')
-    {
-        if (cubo.color == celdas[y][x - 1].color && celdas[y][x - 1].eliminar == false)
-        {
-            cubosVecinos.push(celdas[y][x - 1]);
-            celdas[y][x - 1].eliminar = true;
-        }
-    }
-
-    // Cubo derecho
-    if (x < celdas[y].length - 1 && typeof celdas[y][x + 1] != 'undefined')
-    {
-        if (cubo.color == celdas[y][x + 1].color && celdas[y][x + 1].eliminar == false)
-        {
-            cubosVecinos.push(celdas[y][x + 1]);
-            celdas[y][x + 1].eliminar = true;
-        }
-    }
-
-    for (let i = 0; i < cubosVecinos.length; i++)
-    {
-        marcarCubosAdjacentes(cubosVecinos[i]);
-    }
-}
-
-function eliminarCubos()
-{
-    let celdas = juego.tablero.celdas;
-    for (let y = 0; y < celdas.length; y++)
-    {
-        for(let x = 0; x < celdas[y].length; x++)
-        {
-            if (celdas[y][x].length != 0 && celdas[y][x].eliminar == true)
-            {
-                celdas[y][x] = [];
-                let cuboDOM = document.querySelector('[posicion-x="' + x + '"][posicion-y="' + y + '"]');
-                cuboDOM.remove();
-            }
-        }
-    }
-}
-
-function reordenarCubos()
-{
-    let celdas = juego.tablero.celdas;
-    for (let a = 0; a < celdas.length; a++)
-    {
-        for (let y = celdas.length - 1; y >= 0; y--)
-        {
-            for (let x = 0; x < celdas[y].length; x++)
-            {
-                if (celdas[y][x].length == 0 || typeof celdas[y][x] == 'undefined')
-                {
-                    if (y > 0 && typeof celdas[y - 1][x] != 'undefined' && celdas[y - 1][x].length != 0)
-                    {
-                        celdas[y][x] = celdas[y - 1][x];
-                        celdas[y][x].posicion.x = x;
-                        celdas[y][x].posicion.y = y;
-                        celdas[y - 1][x] = [];
-                    }
-                }
-            }
-        }
-    }
-}
-
-function bajarCubos()
-{
-    let celdas = juego.tablero.celdas;
-    for (let y = 0; y < celdas.length; y++)
-    {
-        for (let x = 0; x < celdas[y].length; x++)
-        {
-            if (celdas[y][x].length != 0)
-            {
-                let cubo = celdas[y][x];
-                let cuboDOM = document.getElementById(cubo.id.toString());
-                let yPos = Number(cuboDOM.getAttribute("posicion-y"));
-                if (yPos != cubo.posicion.y)
-                {
-                    let nuevaPosicion = new Vector2D(y,x);
-                    nuevaPosicion.Multiplicar(40);
-                    cuboDOM.setAttribute("posicion-x", cubo.posicion.x);
-                    cuboDOM.setAttribute("posicion-y", cubo.posicion.y);
-                    ubicarElemento(cuboDOM, nuevaPosicion);
-                }
-            }
-        }
-    }
+    juego.tablero.marcarAreaCubos(cubo);
+    juego.nuevaRonda();
 }
 
 class Vector2D
@@ -241,28 +119,160 @@ class Tablero
             }
         }
     }
+
+    marcarAreaCubos(cubo)
+    {
+        let x = cubo.posicion.x;
+        let y = cubo.posicion.y;
+        let celdas = this.celdas;
+        
+        let cubosVecinos = [];
+    
+        // Cubo superior
+        if (y > 0 && typeof celdas[y - 1][x] != 'undefined')
+        {
+            if (cubo.color == celdas[y - 1][x].color && celdas[y - 1][x].eliminar == false)
+            {
+                cubosVecinos.push(celdas[y - 1][x]);
+                celdas[y - 1][x].eliminar = true;
+            }
+        }
+    
+        // Cubo inferior
+        if (y < celdas.length - 1 && typeof celdas[y + 1][x] != 'undefined')
+        {
+            if (cubo.color == celdas[y + 1][x].color && celdas[y + 1][x].eliminar == false)
+            {
+                cubosVecinos.push(celdas[y + 1][x]);
+                celdas[y + 1][x].eliminar = true;
+            }
+        }
+    
+        // Cubo izquierdo
+        if (x > 0 && typeof celdas[y][x - 1] != 'undefined')
+        {
+            if (cubo.color == celdas[y][x - 1].color && celdas[y][x - 1].eliminar == false)
+            {
+                cubosVecinos.push(celdas[y][x - 1]);
+                celdas[y][x - 1].eliminar = true;
+            }
+        }
+    
+        // Cubo derecho
+        if (x < celdas[y].length - 1 && typeof celdas[y][x + 1] != 'undefined')
+        {
+            if (cubo.color == celdas[y][x + 1].color && celdas[y][x + 1].eliminar == false)
+            {
+                cubosVecinos.push(celdas[y][x + 1]);
+                celdas[y][x + 1].eliminar = true;
+            }
+        }
+    
+        for (let i = 0; i < cubosVecinos.length; i++)
+        {
+            this.marcarAreaCubos(cubosVecinos[i]);
+        }
+    }
+
+    eliminarCubos()
+    {
+        let celdas = this.celdas;
+        for (let y = 0; y < celdas.length; y++)
+        {
+            for(let x = 0; x < celdas[y].length; x++)
+            {
+                if (celdas[y][x].length != 0 && celdas[y][x].eliminar == true)
+                {
+                    celdas[y][x] = [];
+                    let cuboDOM = document.querySelector('[posicion-x="' + x + '"][posicion-y="' + y + '"]');
+                    cuboDOM.remove();
+                }
+            }
+        }
+    }
+
+    reordenarCubos()
+    {
+        let celdas = this.celdas;
+        for (let a = 0; a < celdas.length; a++)
+        {
+            for (let y = celdas.length - 1; y >= 0; y--)
+            {
+                for (let x = 0; x < celdas[y].length; x++)
+                {
+                    if (celdas[y][x].length == 0 || typeof celdas[y][x] == 'undefined')
+                    {
+                        if (y > 0 && typeof celdas[y - 1][x] != 'undefined' && celdas[y - 1][x].length != 0)
+                        {
+                            celdas[y][x] = celdas[y - 1][x];
+                            celdas[y][x].posicion.x = x;
+                            celdas[y][x].posicion.y = y;
+                            celdas[y - 1][x] = [];
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    bajarCubos()
+    {
+        let celdas = this.celdas;
+        for (let y = 0; y < celdas.length; y++)
+        {
+            for (let x = 0; x < celdas[y].length; x++)
+            {
+                if (celdas[y][x].length != 0)
+                {
+                    let cubo = celdas[y][x];
+                    let cuboDOM = document.getElementById(cubo.id.toString());
+                    let yPos = Number(cuboDOM.getAttribute("posicion-y"));
+                    if (yPos != cubo.posicion.y)
+                    {
+                        let nuevaPosicion = new Vector2D(y,x);
+                        nuevaPosicion.Multiplicar(40);
+                        cuboDOM.setAttribute("posicion-x", cubo.posicion.x);
+                        cuboDOM.setAttribute("posicion-y", cubo.posicion.y);
+                        ubicarElemento(cuboDOM, nuevaPosicion);
+                    }
+                }
+            }
+        }
+    }
+
 }
 class Jugador
 {
-    constructor(nombre){
+    constructor(nombre)
+    {
         this.nombre = nombre;
         this.puntaje = 0;
     }  
 }
 class Juego
 {
-    constructor(){
+    constructor()
+    {
         this.tablero = new Tablero(10,10);
         this.jugador = document.getElementById("nombreJugador").value;
         this.comenzarJuego();
     }
 
-    comenzarJuego(){
+    comenzarJuego()
+    {
         this.tablero.completarCeldas();
     }
 
-    mostrarJuego(){
+    mostrarJuego()
+    {
         this.tablero.imprimirCeldas();
+    }
+
+    nuevaRonda()
+    {
+        this.tablero.eliminarCubos();
+        this.tablero.reordenarCubos();
+        this.tablero.bajarCubos();
     }
 }
 
