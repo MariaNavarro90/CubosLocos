@@ -22,12 +22,12 @@ function colorRandom()
 function instanciarElemento(elemento, parent, posicion)
 {
     ubicarElemento(elemento, posicion);
-    parent.appendChild(elemento);
+    parent.append(elemento);
 }
 
 function ubicarElemento(elemento, posicion)
 {
-    elemento.setAttribute("style", "left:" + posicion.x  + "px;top:" + posicion.y + "px");
+    elemento.attr("style", "left:" + posicion.x  + "px;top:" + posicion.y + "px");
 }
 
 function eliminarCubo(evento)
@@ -97,7 +97,7 @@ class Tablero
 
     imprimirCeldas()
     {
-        let juegoDOM = document.getElementById("juego");
+        let juegoDOM = $("#juego");
         juegoDOM.innerHTML = "";
         for(let y = 0; y < this.celdas.length; y++)
         {
@@ -105,15 +105,15 @@ class Tablero
             {
                 if (this.celdas[y][x].length != 0)
                 {
-                    let cuboDOM = document.createElement("div");
-                    cuboDOM.classList.add("cubo");
-                    cuboDOM.classList.add(this.celdas[y][x].color);
+                    let cuboDOM = $("<div/>");
+                    cuboDOM.addClass("cubo");
+                    cuboDOM.addClass(this.celdas[y][x].color);
                     let posicion = new Vector2D(y,x);
                     posicion.Multiplicar(40);
-                    cuboDOM.setAttribute("posicion-x",x);
-                    cuboDOM.setAttribute("posicion-y",y);
-                    cuboDOM.setAttribute("id", this.celdas[y][x].id);
-                    cuboDOM.onclick = eliminarCubo;
+                    cuboDOM.attr("posicion-x",x);
+                    cuboDOM.attr("posicion-y",y);
+                    cuboDOM.attr("id", this.celdas[y][x].id);
+                    cuboDOM.click((e)=> eliminarCubo (e));
                     instanciarElemento(cuboDOM, juegoDOM, posicion);  
                 }
             }
@@ -184,7 +184,7 @@ class Tablero
                 if (celdas[y][x].length != 0 && celdas[y][x].eliminar == true)
                 {
                     celdas[y][x] = [];
-                    let cuboDOM = document.querySelector('[posicion-x="' + x + '"][posicion-y="' + y + '"]');
+                    let cuboDOM = $('[posicion-x="' + x + '"][posicion-y="' + y + '"]');
                     cuboDOM.remove();
                 }
             }
@@ -225,14 +225,14 @@ class Tablero
                 if (celdas[y][x].length != 0)
                 {
                     let cubo = celdas[y][x];
-                    let cuboDOM = document.getElementById(cubo.id.toString());
-                    let yPos = Number(cuboDOM.getAttribute("posicion-y"));
+                    let cuboDOM = $("#" + cubo.id.toString());
+                    let yPos = Number(cuboDOM.attr("posicion-y"));
                     if (yPos != cubo.posicion.y)
                     {
                         let nuevaPosicion = new Vector2D(y,x);
                         nuevaPosicion.Multiplicar(40);
-                        cuboDOM.setAttribute("posicion-x", cubo.posicion.x);
-                        cuboDOM.setAttribute("posicion-y", cubo.posicion.y);
+                        cuboDOM.attr("posicion-x", cubo.posicion.x);
+                        cuboDOM.attr("posicion-y", cubo.posicion.y);
                         ubicarElemento(cuboDOM, nuevaPosicion);
                     }
                 }
@@ -254,7 +254,7 @@ class Juego
     constructor()
     {
         this.tablero = new Tablero(10,10);
-        this.jugador = document.getElementById("nombreJugador").value;
+        this.jugador = $("#nombreJugador").val();
         this.comenzarJuego();
     }
 
@@ -282,17 +282,16 @@ function Iniciar()
 {
     juego = new Juego();
     juego.mostrarJuego();
-    let puntajesDOM = document.getElementById("mejoresPuntajes");
+    let puntajesDOM = $("#mejoresPuntajes");
     let jugador = document.createElement("li");
     jugador.innerText = juego.jugador;
-    puntajesDOM.appendChild(jugador);
-    document.getElementById("splash").remove();
+    puntajesDOM.append(jugador);
+    $("#splash").remove();
 }
 
-var botonInicio = document.getElementById("comenzar");
-botonInicio.onclick = () => {
-    if(document.getElementById("nombreJugador").value != "")
-    {
-        Iniciar();
+var botonInicio = $("#comenzar");
+botonInicio.click(() => { 
+    if($("#nombreJugador").val() != ""){
+        Iniciar() 
     }
-}
+});
