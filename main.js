@@ -30,15 +30,35 @@ function ubicarElemento(elemento, posicion)
     elemento.attr("style", "left:" + posicion.x  + "px;top:" + posicion.y + "px");
 }
 
+function moverElemento(elemento, posicion)
+{
+    let posYInicial = elemento.position().top;
+    let posYFinal = posicion.y;
+    let distancia = posYFinal - posYInicial;
+    let velocidad = 300;
+    let segundosTotal = Math.floor((distancia / velocidad) * 1000);
+
+    if (segundosTotal > juego.intervaloBloqueo)
+    {
+        juego.intervaloBloqueo = segundosTotal;
+    }
+
+    elemento.animate({top: posYFinal+"px"}, segundosTotal);
+}
+
 function eliminarCubo(evento)
 {
-    let cuboDOM = evento.target;
-    let posicionX = Number(cuboDOM.getAttribute("posicion-x"));
-    let posicionY = Number(cuboDOM.getAttribute("posicion-y"));
-    let cubo = juego.tablero.celdas[posicionY][posicionX];
-    cubo.eliminar = true;
-    juego.tablero.marcarAreaCubos(cubo);
-    juego.nuevaRonda();
+    if (juego.bloquearClick == false)
+    {
+        let cuboDOM = evento.target;
+        let posicionX = Number(cuboDOM.getAttribute("posicion-x"));
+        let posicionY = Number(cuboDOM.getAttribute("posicion-y"));
+        let cubo = juego.tablero.celdas[posicionY][posicionX];
+        cubo.eliminar = true;
+        juego.tablero.marcarAreaCubos(cubo);
+        juego.nuevaRonda();
+        juego.bloquearClick = true;
+    }
 }
 
 class Vector2D
@@ -233,11 +253,12 @@ class Tablero
                         nuevaPosicion.Multiplicar(40);
                         cuboDOM.attr("posicion-x", cubo.posicion.x);
                         cuboDOM.attr("posicion-y", cubo.posicion.y);
-                        ubicarElemento(cuboDOM, nuevaPosicion);
+                        moverElemento(cuboDOM, nuevaPosicion);
                     }
                 }
             }
         }
+        setTimeout(function() { juego.bloquearClick = false; }, juego.intervaloBloqueo);
     }
 
 }
@@ -256,6 +277,8 @@ class Juego
         this.tablero = new Tablero(10,10);
         this.jugador = $("#nombreJugador").val();
         this.comenzarJuego();
+        this.bloquearClick = false;
+        this.intervaloBloqueo = 0;
     }
 
     comenzarJuego()
@@ -286,12 +309,13 @@ function Iniciar()
     let jugador = document.createElement("li");
     jugador.innerText = juego.jugador;
     puntajesDOM.append(jugador);
-    $("#splash").remove();
 }
 
 var botonInicio = $("#comenzar");
 botonInicio.click(() => { 
     if($("#nombreJugador").val() != ""){
-        Iniciar() 
+        $("#splash").fadeOut("slow", function(){
+            Iniciar();
+        });
     }
 });

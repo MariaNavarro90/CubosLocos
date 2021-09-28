@@ -21,7 +21,7 @@ h1
     height: 38px;
     background-color: grey;
     border-radius: 4px;
-    transition: 0.25s all ease;
+    transition: 0.25s box-shadow ease;
 }
 
 .cubo:hover
