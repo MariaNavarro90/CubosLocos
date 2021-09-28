@@ -323,7 +323,7 @@ class Juego
 
     actualizarPuntaje()
     {
-        $("#"+this.jugador.nombre).text(this.jugador.nombre + ": " + this.jugador.puntaje);
+        $("#jugador").text(this.jugador.nombre + ": " + this.jugador.puntaje);
     }
 }
 
@@ -335,7 +335,7 @@ function Iniciar()
     juego.mostrarJuego();
     let puntajesDOM = $("#mejoresPuntajes");
     let jugador = $("<li/>");
-    jugador.attr("id", juego.jugador.nombre);
+    jugador.attr("id", "jugador");
     jugador.text(juego.jugador.nombre + ": " + juego.jugador.puntaje);
     puntajesDOM.append(jugador);
 }
