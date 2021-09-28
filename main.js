@@ -1,3 +1,20 @@
+/*
+Función obtenida de:
+https://medium.com/developers-writing/fibonacci-sequence-algorithm-in-javascript-b253dc7e320e
+*/
+function fibonacci(num){
+    var a = 1, b = 0, temp;
+  
+    while (num >= 0){
+      temp = a;
+      a = a + b;
+      b = temp;
+      num--;
+    }
+  
+    return b;
+  }
+
 function colorRandom()
 {
     let color = "";
@@ -197,6 +214,7 @@ class Tablero
     eliminarCubos()
     {
         let celdas = this.celdas;
+        let cubosAEliminar = 0;
         for (let y = 0; y < celdas.length; y++)
         {
             for(let x = 0; x < celdas[y].length; x++)
@@ -206,9 +224,13 @@ class Tablero
                     celdas[y][x] = [];
                     let cuboDOM = $('[posicion-x="' + x + '"][posicion-y="' + y + '"]');
                     cuboDOM.remove();
+                    cubosAEliminar++;
                 }
             }
         }
+        console.log(juego);
+        console.log(juego.jugador);
+        juego.jugador.puntaje += fibonacci(cubosAEliminar);
     }
 
     reordenarCubos()
@@ -275,7 +297,7 @@ class Juego
     constructor()
     {
         this.tablero = new Tablero(10,10);
-        this.jugador = $("#nombreJugador").val();
+        this.jugador = new Jugador($("#nombreJugador").val());
         this.comenzarJuego();
         this.bloquearClick = false;
         this.intervaloBloqueo = 0;
@@ -294,8 +316,14 @@ class Juego
     nuevaRonda()
     {
         this.tablero.eliminarCubos();
+        this.actualizarPuntaje();
         this.tablero.reordenarCubos();
         this.tablero.bajarCubos();
+    }
+
+    actualizarPuntaje()
+    {
+        $("#"+this.jugador.nombre).text(this.jugador.nombre + ": " + this.jugador.puntaje);
     }
 }
 
@@ -306,8 +334,9 @@ function Iniciar()
     juego = new Juego();
     juego.mostrarJuego();
     let puntajesDOM = $("#mejoresPuntajes");
-    let jugador = document.createElement("li");
-    jugador.innerText = juego.jugador;
+    let jugador = $("<li/>");
+    jugador.attr("id", juego.jugador.nombre);
+    jugador.text(juego.jugador.nombre + ": " + juego.jugador.puntaje);
     puntajesDOM.append(jugador);
 }
 
