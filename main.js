@@ -297,6 +297,7 @@ class Tablero
             }
         }
         setTimeout(function() { juego.bloquearClick = false; }, juego.intervaloBloqueo);
+        juego.intervaloBloqueo = 0;
     }
 
 }
