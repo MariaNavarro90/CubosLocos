@@ -1,0 +1,22 @@
+{
+    "puntajes":
+    [
+        {
+            "nombre": "Tito",
+            "puntaje": 666666
+        },
+        {
+            "nombre": "Licho",
+            "puntaje": 22
+
+        },
+        {
+            "nombre":"More",
+            "puntaje":3750
+        },
+        {
+            "nombre": "Cubo",
+            "puntaje": 5267
+        }
+    ]
+}

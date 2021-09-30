@@ -15,6 +15,22 @@ function fibonacci(num){
     return b;
   }
 
+function obtenerPuntaje()
+{
+    let urlJson = "puntajes.json";
+    $.getJSON(urlJson, function (respuesta, estado)
+    {
+        if(estado === "success")
+        {
+            let puntajes = respuesta.puntajes;
+            for (const puntaje of puntajes)
+            {
+                $("#mejoresPuntajes").append(`<li>${puntaje.nombre}: ${puntaje.puntaje}`);
+            }
+        }
+    })
+}
+
 function colorRandom()
 {
     let color = "";
@@ -333,11 +349,12 @@ function Iniciar()
 {
     juego = new Juego();
     juego.mostrarJuego();
+    obtenerPuntaje();
     let puntajesDOM = $("#mejoresPuntajes");
     let jugador = $("<li/>");
     jugador.attr("id", "jugador");
-    jugador.text(juego.jugador.nombre + ": " + juego.jugador.puntaje);
-    puntajesDOM.append(jugador);
+    jugador.text(`${juego.jugador.nombre}: ${juego.jugador.puntaje}`);
+    puntajesDOM.prepend(jugador);
 }
 
 var botonInicio = $("#comenzar");
